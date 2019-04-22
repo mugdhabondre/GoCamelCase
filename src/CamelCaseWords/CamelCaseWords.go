@@ -2,24 +2,24 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"strings"
 	"CamelCaseWords/oxfordDict"
 )
 
 func processSentence(sen string) string {
-	words := [10]string{"i", "like", "sam", "sung", "samsung", "dell", "love", "me", "mine", "apple"}
 	var dp []bool
 	var prevWord []int
-	wordMap := make(map[string]float64) 
-
-	for i:=0; i < len(words); i++ {
-		wordMap[words[i]] = 1
-	}
 
 	for i := 0; i < len(sen); i++ {
 		dp = append(dp, false)
 		prevWord = append(prevWord, -1)
-		for j := i-1; j > -2; j-- {
+		if (i ==0 || (i > 0 && dp[i-1] == true)) && (string(sen[i]) == "i" || string(sen[i]) == "I") {
+			dp[i] = true
+			prevWord[i] = i-1
+			continue
+		}
+		for j := i-2; j > -2; j-- {
 			if j == -1 || dp[j] == true {
 				exists := oxfordDict.Connect(sen[j+1:i+1])
 				// fmt.Println(sen[j+1:i+1], exists)
@@ -38,10 +38,13 @@ func processSentence(sen string) string {
 	var res []int
 	if dp[len(sen) - 1] == true {
 		for i:=len(sen)-1; i>0; {
+			if prevWord[i] == -1 {
+				break
+			}
 			res = append(res, prevWord[i]+1)
 			i = prevWord[i]
 		}
-
+		// fmt.Println(res)
 		cSen = makeCamelCase(sen, res)
 
 	}
@@ -49,7 +52,7 @@ func processSentence(sen string) string {
 }
 
 func makeCamelCase(sentence string, res []int) string {
-	for i:=0; i<len(res)-1; i++  {
+	for i:=0; i<len(res); i++  {
 		letter := string(sentence[res[i]])
 		sentence = sentence[:res[i]] + strings.ToUpper(letter) + sentence[res[i]+1:]
 	}
@@ -57,7 +60,8 @@ func makeCamelCase(sentence string, res []int) string {
 }
 
 func main() {
-	input := "onetwothree"
+	args := os.Args
+	input := args[1]
     fmt.Println("Checking for", input)
 	fmt.Println("Result:", processSentence(input))
 

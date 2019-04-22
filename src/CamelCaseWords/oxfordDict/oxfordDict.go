@@ -15,11 +15,11 @@ func Connect(word_id string) bool{
 	endpoint := "entries"
 	language_code := "en-us"
 
-	categories :=  "verb,adjective,adverb,conjunction,numeral,particle,preposition,pronoun"
+	categories :=  "verb,adjective,adverb,conjunction,numeral,particle,preposition,pronoun,noun"
 	url := "https://od-api.oxforddictionaries.com/api/v2/" + endpoint + "/" + language_code + "/" + strings.ToLower(word_id) + "?lexicalCategory=" + categories
 
 	client := &http.Client{}
-	//resp, err := http.Get(url)
+
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		os.Exit(1)
