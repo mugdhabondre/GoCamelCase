@@ -22,8 +22,7 @@ func processSentence(sen string) string {
 		for j := i-1; j > -2; j-- {
 			if j == -1 || dp[j] == true {
 				exists := oxfordDict.Connect(sen[j+1:i+1])
-				fmt.Println(sen[j+1:i+1], exists)
-				// _, exists := wordMap[sen[j+1:i+1]]
+				// fmt.Println(sen[j+1:i+1], exists)
 				if exists == true {
 					dp[i] = true
 					if i > 0 {
@@ -50,7 +49,7 @@ func processSentence(sen string) string {
 }
 
 func makeCamelCase(sentence string, res []int) string {
-	for i:=len(res)-1; i>0; i--  {
+	for i:=0; i<len(res)-1; i++  {
 		letter := string(sentence[res[i]])
 		sentence = sentence[:res[i]] + strings.ToUpper(letter) + sentence[res[i]+1:]
 	}
@@ -59,9 +58,7 @@ func makeCamelCase(sentence string, res []int) string {
 
 func main() {
 	input := "onetwothree"
-    fmt.Println("Checking for ", input)
-	fmt.Println("Result: ", processSentence(input))
-
-	//fmt.Println(oxfordDict.Connect("i"))
+    fmt.Println("Checking for", input)
+	fmt.Println("Result:", processSentence(input))
 
 }

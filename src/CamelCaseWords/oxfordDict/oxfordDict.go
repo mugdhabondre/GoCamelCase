@@ -15,7 +15,7 @@ func Connect(word_id string) bool{
 	endpoint := "entries"
 	language_code := "en-us"
 
-	categories :=  "noun,verb,adjective,adverb,conjunction,numeral,particle,preposition,pronoun"
+	categories :=  "verb,adjective,adverb,conjunction,numeral,particle,preposition,pronoun"
 	url := "https://od-api.oxforddictionaries.com/api/v2/" + endpoint + "/" + language_code + "/" + strings.ToLower(word_id) + "?lexicalCategory=" + categories
 
 	client := &http.Client{}
