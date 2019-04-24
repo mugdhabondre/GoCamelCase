@@ -1,6 +1,7 @@
 package oxforddict
 
 import (
+	"fmt"
 	"strings"
 	"net/http"
 	"os"
@@ -8,40 +9,59 @@ import (
 	"encoding/json"
 )
 
-func Connect(word_id string) bool{
-	app_id := "	0043c514"
-	app_key := "6039d61fd17213e07123cc1f79b2205b"
+var (
+	credentialsfile	string = "oxforddict/credentials.json"
+	endpoint		string = "entries"
+	language_code	string = "en-us"
+	oxfordUrl 		string = "https://od-api.oxforddictionaries.com/api/v2/"
+)
 
-	endpoint := "entries"
-	language_code := "en-us"
+type config struct{
+    Appid string
+    Appkey string
+}
+
+// method to connect to oxford API and check if the given word exists 
+func ConnectAndCheck(word_id string) bool{
+	config := getcredentials(credentialsfile)
 
 	categories :=  "verb,adjective,adverb,conjunction,numeral,particle,preposition,pronoun,noun"
-	url := "https://od-api.oxforddictionaries.com/api/v2/" + endpoint + "/" + language_code + "/" + strings.ToLower(word_id) + "?lexicalCategory=" + categories
+	url 	:=  oxfordUrl + endpoint + "/" + language_code + "/" + strings.ToLower(word_id) + "?lexicalCategory=" + categories
 
+	// Create client connection
 	client := &http.Client{}
-
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		os.Exit(1)
 	}
-	req.Header.Add("app_id", app_id)
-	req.Header.Add("app_key", app_key)
+	req.Header.Add("app_id", config.Appid)
+	req.Header.Add("app_key", config.Appkey)
 	resp, err := client.Do(req)
 	defer resp.Body.Close()
 
+	// Read the body of the response
 	body, err := ioutil.ReadAll(resp.Body)
-
 	responseString := string(body)
-
 	var jsonResp map[string]interface{}
 	json.Unmarshal([]byte(responseString), &jsonResp)
 
-	_, ok := jsonResp["error"]
+	// Check if the response contains error, if it does, the word does not exist
+	_, errorexists := jsonResp["error"]
 
-	if ok == false {
+	return !errorexists
+}
 
-	}
 
-	return !ok
-
+func getcredentials(filename string) config {
+    content, err := ioutil.ReadFile(filename)
+    if err!=nil{
+        fmt.Print("Error:",err)
+    }
+    var conf config
+    err=json.Unmarshal(content, &conf)
+    if err!=nil{
+        fmt.Print("Error:",err)
+    }
+    
+    return conf
 }
