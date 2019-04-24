@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"os"
 	"github.com/gorilla/mux"
-	"gocamelcase/gocamelcaseimpl"
+	"github.com/mugdhabondre/gocamelcase/gocamelcaseimpl"
 )
 
 
@@ -23,7 +23,7 @@ func RequestHandler(w http.ResponseWriter, r *http.Request) {
 
 // HelloHandler return hello world message`
 func HelloHandler(w http.ResponseWriter, _ *http.Request) {
-	io.WriteString(w, "Hello user!\nEnter a phrase that needs to camelcased as https://<hostname>:<port>/camelcase/<your phrase>")
+	io.WriteString(w, "Hello user!\nEnter a phrase that needs to be camelcased as https://<hostname>:<port>/camelcase/<your phrase>")
 }
 
 func main() {

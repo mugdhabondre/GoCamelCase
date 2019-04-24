@@ -2,7 +2,7 @@ package gocamelcaseimpl
 
 import (
 	"strings"
-	"gocamelcase/oxforddict"
+	"github.com/mugdhabondre/gocamelcase/oxforddict"
 )
 
 // Method to process given phrase to find legitimate words
