@@ -55,7 +55,7 @@ func ProcessPhrase(phrase string) string {
 	return resPhrase
 }
 
-
+//.Method to find indices which have completed words starting the zeroeth index
 func findWordIndices(phrase string, isWord []bool, prevWord []int) []int {
 	var capitalIndices []int
 	lastWordIndex := len(phrase)-1
@@ -91,10 +91,3 @@ func makeCamelCase(sentence string, res []int) string {
 	return sentence
 }
 
-// func main() {
-// 	args := os.Args
-// 	input := args[1]
-//     fmt.Println("Checking for", input)
-// 	fmt.Println("Result:", processPhrase(input))
-
-// }

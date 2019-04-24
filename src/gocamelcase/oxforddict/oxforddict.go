@@ -11,9 +11,9 @@ import (
 
 var (
 	credentialsfile	string = "oxforddict/credentials.json"
-	endpoint		string = "entries"
-	language_code	string = "en-us"
-	oxfordUrl 		string = "https://od-api.oxforddictionaries.com/api/v2/"
+	endpoint string = "entries"
+	language_code string = "en-us"
+	oxfordUrl string = "https://od-api.oxforddictionaries.com/api/v2/"
 )
 
 type config struct{
@@ -26,7 +26,7 @@ func ConnectAndCheck(word_id string) bool{
 	config := getcredentials(credentialsfile)
 
 	categories :=  "verb,adjective,adverb,conjunction,numeral,particle,preposition,pronoun,noun"
-	url 	:=  oxfordUrl + endpoint + "/" + language_code + "/" + strings.ToLower(word_id) + "?lexicalCategory=" + categories
+	url :=  oxfordUrl + endpoint + "/" + language_code + "/" + strings.ToLower(word_id) + "?lexicalCategory=" + categories
 
 	// Create client connection
 	client := &http.Client{}
@@ -51,12 +51,15 @@ func ConnectAndCheck(word_id string) bool{
 	return !errorexists
 }
 
-
+// Get appi_id and app_key for Oxford Dictionary API
 func getcredentials(filename string) config {
+	// Open the file, get contents
     content, err := ioutil.ReadFile(filename)
     if err!=nil{
         fmt.Print("Error:",err)
     }
+
+    // Unmarshal contents
     var conf config
     err=json.Unmarshal(content, &conf)
     if err!=nil{
