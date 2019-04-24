@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	"CamelCaseWords/oxfordDict"
+	"gocamelcase/oxfordDict"
 )
 
 func processSentence(sen string) string {

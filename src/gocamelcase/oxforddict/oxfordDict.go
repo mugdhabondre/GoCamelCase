@@ -1,4 +1,4 @@
-package oxfordDict
+package oxforddict
 
 import (
 	"strings"
