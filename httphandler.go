@@ -23,7 +23,10 @@ func RequestHandler(w http.ResponseWriter, r *http.Request) {
 
 // HelloHandler return hello world message`
 func HelloHandler(w http.ResponseWriter, _ *http.Request) {
-	io.WriteString(w, "Hello user!\nEnter a phrase that needs to be camelcased as https://<hostname>:<port>/camelcase/<your phrase>")
+	io.WriteString(w, "Welcome to the camelCase generator!\n" +
+					  "Append a string to the url that needs to be camelcased as :\n" + 
+					  "https://<hostname>:<port>/camelcase/<your string>\n" +
+					  "example: https://camelcasegenerator.azurewebsites.net/camelcase/ilikeapple")
 }
 
 func main() {

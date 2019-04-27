@@ -7,10 +7,11 @@ import (
 	"os"
 	"io/ioutil"
 	"encoding/json"
+	"path/filepath"
 )
 
 var (
-	credentialsfile	string = "oxforddict/credentials.json"
+	credentialsfile	string = "/credentials.json"
 	endpoint string = "entries"
 	language_code string = "en-us"
 	oxfordUrl string = "https://od-api.oxforddictionaries.com/api/v2/"
@@ -22,11 +23,18 @@ type config struct{
 }
 
 // method to connect to oxford API and check if the given word exists 
-func ConnectAndCheck(word_id string) bool{
-	config := getcredentials(credentialsfile)
+func ConnectAndCheck(word_id string) bool {
+	rootPath, _ := os.Getwd()
+	credFilePath, _ := filepath.Abs(credentialsfile)
+	credFilePath = rootPath + credentialsfile
+	config, error := getcredentials(credFilePath)
+
+	if error != nil {
+		return false
+	}
 
 	categories :=  "verb,adjective,adverb,conjunction,numeral,particle,preposition,pronoun,noun"
-	url :=  oxfordUrl + endpoint + "/" + language_code + "/" + strings.ToLower(word_id) + "?lexicalCategory=" + categories
+	url :=  oxfordUrl + endpoint + "/" + language_code + "/" + strings.ToLower(word_id) + "?fields=definitions&strictMatch=true&lexicalCategory=" + categories
 
 	// Create client connection
 	client := &http.Client{}
@@ -37,6 +45,11 @@ func ConnectAndCheck(word_id string) bool{
 	req.Header.Add("app_id", config.Appid)
 	req.Header.Add("app_key", config.Appkey)
 	resp, err := client.Do(req)
+
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
 	defer resp.Body.Close()
 
 	// Read the body of the response
@@ -52,19 +65,21 @@ func ConnectAndCheck(word_id string) bool{
 }
 
 // Get appi_id and app_key for Oxford Dictionary API
-func getcredentials(filename string) config {
+func getcredentials(filename string) (config, error) {
+	var conf config
 	// Open the file, get contents
-    content, err := ioutil.ReadFile(filename)
-    if err!=nil{
-        fmt.Print("Error:",err)
+    content, error := ioutil.ReadFile(filename)
+    if error != nil{
+        fmt.Println("Error:",error)
+        return conf, error
     }
 
     // Unmarshal contents
-    var conf config
-    err=json.Unmarshal(content, &conf)
-    if err!=nil{
-        fmt.Print("Error:",err)
+    error = json.Unmarshal(content, &conf)
+    if error !=nil{
+        fmt.Println("Error:",error)
+        return conf, error
     }
     
-    return conf
+    return conf, nil
 }

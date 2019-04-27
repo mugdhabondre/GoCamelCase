@@ -63,7 +63,7 @@ func findWordIndices(phrase string, isWord []bool, prevWord []int) []int {
 	// if last index of phrase is not a word, find the last index that is a word
 	if isWord[lastWordIndex] != true {
 		i := 0
-		for i =len(isWord)-1; i>=0 && isWord[i] != true; {
+		for i =len(isWord)-1; i>0 && isWord[i] != true; {
 			i--
 		}
 		lastWordIndex = i
