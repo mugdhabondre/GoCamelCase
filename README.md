@@ -1,14 +1,24 @@
 # goCamelCase
 
-Problem Statement:
-Write a RESTFul endpoint in GOLang that would take a string as an input and return camelCase of the same based on English dictionary words.
-You should use a dictionary API (for example free API of https://developer.oxforddictionaries.com/). 
+goCamelCase is a RESTful service in Go that takes string as an input and returns camelCase of the same based on a standard English Dictionary. 
 
-For example:
+Example:
 
 input: "onetwothree"
 
 output: "oneTwoThree" 
 
-The service code should be deployed in Azure.
+The service is deployed in Azure.
+
+## Installation
+
+Instructions for installation and running the service can be found [here](https://github.com/mugdhabondre/goCamelCase/installAndGo.md).
+
+##  Design
+
+The design of the service and libraries used internally can be found [here](https://github.com/mugdhabondre/goCamelCase/Design.md).
+It also defines the assumptions of the service, and talks about the analysis and future improvements.
+ 
+
+
 
