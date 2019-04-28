@@ -67,6 +67,7 @@ A Dockerfile is included in this repo which creates an image from Alpine Linux.<
 Build a container image as follows and try to run it locally:
 
 ```bash
+$ env GOOS="linux" GOARCH="amd64" ./build.sh
 $ docker build -t mugdhab/gocamelcase .
 $ docker run -p 5005:80 --env PORT=80 mugdhab/gocamelcase:latest 
 ```

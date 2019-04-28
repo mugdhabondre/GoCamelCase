@@ -2,7 +2,7 @@
 In this document, I am describing the _What_, _Why_ and _How_ of the application. I will also be analysing the performance of the application and suggest improvements. 
 
 
-##Understanding the problem
+## Understanding the problem
 So lets see what would be our inputs and output. Input to the application would be a string supplied as a field in the URL. This string could be a concatenation of words or just random letters. 
 Output would also be a string. This string would contain the same letters as the input, however, the letters that are the first letter of a recognized word would be capitalized. Oh, and except the first letter of the string. 
 
@@ -50,11 +50,11 @@ Now, lets take a look at the core algorithm. Lets assume we already have impleme
 Basics of the algorithm is as follows: 
 
 ```bash
-start from the last index<br/>
-traverse the input in reverse<br/>
-  When you come across an index(j) such that input[j:] is a valid word using _ConnectAndCheck_<br/>
-    recursively call the algorithm on input[:j] to check if it can form a valid combination of words<br/> 
-      Break if yes, continue traversing if no<br/>
+start from the last index
+traverse the input in reverse
+  When you come across an index(j) such that input[j:] is a valid word using _ConnectAndCheck_
+    recursively call the algorithm on input[:j] to check if it can form a valid combination of words
+      Break if yes, continue traversing if no
 ```
 
 But recursive implementation has exponential time complexity. So, I have used Dynamic Programming Bottom Up approach to figure out if the string forms a combination of valid words at a particular index. <br/>
@@ -62,25 +62,25 @@ But recursive implementation has exponential time complexity. So, I have used Dy
 Following is the algorithm that I have implemented:
 
 ```bash
-Maintain isWord array to check if is there is a complete chain of words till index i<br/>
-Maintain prevword array to store the index of the end of a word previous to the word ending at i, else -1<br/>
-start from the first index and traverse over each index (i) in the input<br/>
-  for each i, traverse the string input[:i] in reverse to find out the first index (j) such that input[j:i] is a valid word using _ConnectAndCheck_ and isWord[j-1] == true<br/>
-    isWord[i] = true<br/>
-    prevword[i] = j-1<br/>
-  if no such index is found, isWord[i] = false, prevWord[i] = -1<br/>
-At the end of this cycle, check if isWord[len(input)-1] == true<br/>
-  if yes, traverse prevWord array from the last index such that:<br/>
-    while(prevWord[i] != -1)<br/>
-      i = prevword[i]<br/>
-      result.append(i)<br/>
-  Now, result contains the indices of input to be capitalized.<br/>
-  traverse through each index and capitalize the letter in input <br/>
-  return modified input<br/>
-  if no:<br/>
+Maintain isWord array to check if is there is a complete chain of words till index i
+Maintain prevword array to store the index of the end of a word previous to the word ending at i, else -1
+start from the first index and traverse over each index (i) in the input
+  for each i, traverse the string input[:i] in reverse to find out the first index (j) such that input[j:i] is a valid word using _ConnectAndCheck_ and isWord[j-1] == true
+    isWord[i] = true
+    prevword[i] = j-1
+  if no such index is found, isWord[i] = false, prevWord[i] = -1
+At the end of this cycle, check if isWord[len(input)-1] == true
+  if yes, traverse prevWord array from the last index such that:
+    while(prevWord[i] != -1)
+      i = prevword[i]
+      result.append(i)
+  Now, result contains the indices of input to be capitalized.
+  traverse through each index and capitalize the letter in input 
+  return modified input
+  if no:
     find the latest index (k) which had isWord[k] and repeat the above process to extract capital letter indices till k<br/>
-    append the rest of the letters in lowercase<br/>
-  return modified input<br/>
+    append the rest of the letters in lowercase
+  return modified input
 ```
 
 This algorithm runs in O(n^2). We will discuss improvements over the algorithm in Improvements section. 
@@ -111,30 +111,23 @@ These latencies are way more than the acceptable limit of a normal service. Lets
 
 ## Improvements
 
-1. Algorithmic improvements
-
-__Bottom__ __Up__ __Approach__: The algorithm is bottom up currently. If we make it top bottom, we can save some time, by checking only for those indices which can form a potential word. Worst case would still be the same as bottom up, but we do better on the average case.<br/>
-
-__Reverse__ __Traversal__:  Another improvement could be start the second scanning of indices (j) in forward manner instead of reverse. I tried this, but it increases the latency by atleast 1s for sentences with 13-14 letters.<br/>
-
+1. Algorithmic improvements<br/><br/>
+__Bottom__ __Up__ __Approach__: The algorithm is bottom up currently. If we make it top bottom, we can save some time, by checking only for those indices which can form a potential word. Worst case would still be the same as bottom up, but we do better on the average case.<br/><br/>
+__Reverse__ __Traversal__:  Another improvement could be start the second scanning of indices (j) in forward manner instead of reverse. I tried this, but it increases the latency by atleast 1s for sentences with 13-14 letters.<br/><br/>
 __Multiple__ __Queries__ __from__ __a__ __single__ __connection__: The algorithm is quadratic. At each index (i) it can fire upto i queries, n-1 worst case. This is a lot of calls to the oxford dictionary API. One of the solutions could be to open an client connection and fire queries repeatedly to save time on handshakes. 
-This can result in a few extra queries, but we would save some time by this. <br/>
+This can result in a few extra queries, but we would save some time by this. <br/><br/>
 
-2. Oxford Dictionaries API 
+2. Oxford Dictionaries API
+__Input__ __Array__ __of__ __Words__: The API does not have an endpoint which can take in an array of words and return if they are valid or not. This type of a request can save a lot of time <br/><br/>
+__API__ __Response__: The "entries" endpoint returns a lot of data even after limiting the data using fields and filters.<br/><br/>
+__Another__ __API?__: Many other APIs are avialable online which provide validation of words. They should be checked if they are any faster and provide the endpoints that we need.<br/><br/>
 
-__Input__ __Array__ __of__ __Words__: The API does not have an endpoint which can take in an array of words and return if they are valid or not. This type of a request can save a lot of time <br/>
-
-__API__ __Response__: The "entries" endpoint returns a lot of data even after limiting the data using fields and filters.<br/>
-
-__Another__ __API?__: Many other APIs are avialable online which provide validation of words. They should be checked if they are any faster and provide the endpoints that we need.<br/>
-
-3. Use of higher programming primitives
-
+3. Use of higher programming primitives<br/><br/>
 __Parallel__ __requests__: The queries going to the oxford dictionaries api can be multithreaded to achieve the same goal in lesser amount of time. We can parallelize the queries in the inner loop of the algorithm.  
 
-4. Caching results
+4. Caching results<br/><br/>
 We can cache results for words that were queried. This can help reduce latency if we have multiple incoming requests. 
 
-5. Input structure
+5. Input structure<br/><br/>
 We can reduce the number of calls going to the oxford dictionaries API by defining an input strcture which helps the user define the input with separators and then we can capitalize it. Most of the camel case generators online use this trick. This wont be ideal for the problem, just a suggestion.
 

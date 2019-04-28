@@ -6,7 +6,7 @@ EXPOSE 80
 
 # Add executable into image
 COPY build/camelcaseapp /
-COPY oxforddict/credentials.json /
+COPY credentials.json /
 
 RUN apk update \
         && apk upgrade \
