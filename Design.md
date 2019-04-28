@@ -6,15 +6,15 @@ In this document, I am describing the _What_, _Why_ and _How_ of the application
 So lets see what would be our inputs and output. Input to the application would be a string supplied as a field in the URL. This string could be a concatenation of words or just random letters. 
 Output would also be a string. This string would contain the same letters as the input, however, the letters that are the first letter of a recognized word would be capitalized. Oh, and except the first letter of the string. 
 
-For example:
-Input: gameofthrones
-Output: gameOfThrones
+For example:<br/>
+Input: gameofthrones<br/>
+Output: gameOfThrones<br/>
 
-Input: helloworld
-Output:helloWorld
+Input: helloworld<br/>
+Output:helloWorld<br/>
 
-Input: gocamelcase
-Output: goCamelCase
+Input: gocamelcase<br/>
+Output: goCamelCase<br/>
 
 So the real problem lies in identifying all words in the input string, or atleast a list of words which concatenated together will from the same order of letters (case insensitive) as the input. <br/>
 Breaking it down further, <br/>
@@ -49,35 +49,39 @@ Now, lets take a look at the core algorithm. Lets assume we already have impleme
 
 Basics of the algorithm is as follows: 
 
-> start from the last index<br/>
-> traverse the input in reverse<br/>
->> When you come across an index(j) such that input[j:] is a valid word using _ConnectAndCheck_<br/>
->>> recursively call the algorithm on input[:j] to check if it can form a valid combination of words<br/> 
->>>> Break if yes, continue traversing if no<br/>
+```bash
+start from the last index<br/>
+traverse the input in reverse<br/>
+  When you come across an index(j) such that input[j:] is a valid word using _ConnectAndCheck_<br/>
+    recursively call the algorithm on input[:j] to check if it can form a valid combination of words<br/> 
+      Break if yes, continue traversing if no<br/>
+```
 
 But recursive implementation has exponential time complexity. So, I have used Dynamic Programming Bottom Up approach to figure out if the string forms a combination of valid words at a particular index. <br/>
 
 Following is the algorithm that I have implemented:
 
-> Maintain isWord array to check if is there is a complete chain of words till index i<br/>
-> Maintain prevword array to store the index of the end of a word previous to the word ending at i, else -1<br/>
-> start from the first index and traverse over each index (i) in the input<br/>
->> for each i, traverse the string input[:i] in reverse to find out the first index (j) such that input[j:i] is a valid word using _ConnectAndCheck_ and isWord[j-1] == true<br/>
->>> isWord[i] = true<br/>
->>> prevword[i] = j-1<br/>
->> if no such index is found, isWord[i] = false, prevWord[i] = -1<br/>
-> At the end of this cycle, check if isWord[len(input)-1] == true<br/>
->> if yes, traverse prevWord array from the last index such that:<br/>
->>> while(prevWord[i] != -1)<br/>
->>>> i = prevword[i]<br/>
->>>> result.append(i)<br/>
->> Now, result contains the indices of input to be capitalized.<br/>
->> traverse through each index and capitalize the letter in input <br/>
->> return modified input<br/>
->> if no:<br/>
->>> find the latest index (k) which had isWord[k] and repeat the above process to extract capital letter indices till k<br/>
->>> append the rest of the letters in lowercase<br/>
->> return modified input<br/>
+```bash
+Maintain isWord array to check if is there is a complete chain of words till index i<br/>
+Maintain prevword array to store the index of the end of a word previous to the word ending at i, else -1<br/>
+start from the first index and traverse over each index (i) in the input<br/>
+  for each i, traverse the string input[:i] in reverse to find out the first index (j) such that input[j:i] is a valid word using _ConnectAndCheck_ and isWord[j-1] == true<br/>
+    isWord[i] = true<br/>
+    prevword[i] = j-1<br/>
+  if no such index is found, isWord[i] = false, prevWord[i] = -1<br/>
+At the end of this cycle, check if isWord[len(input)-1] == true<br/>
+  if yes, traverse prevWord array from the last index such that:<br/>
+    while(prevWord[i] != -1)<br/>
+      i = prevword[i]<br/>
+      result.append(i)<br/>
+  Now, result contains the indices of input to be capitalized.<br/>
+  traverse through each index and capitalize the letter in input <br/>
+  return modified input<br/>
+  if no:<br/>
+    find the latest index (k) which had isWord[k] and repeat the above process to extract capital letter indices till k<br/>
+    append the rest of the letters in lowercase<br/>
+  return modified input<br/>
+```
 
 This algorithm runs in O(n^2). We will discuss improvements over the algorithm in Improvements section. 
 
