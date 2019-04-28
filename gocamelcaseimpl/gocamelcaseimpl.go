@@ -6,7 +6,7 @@ import (
 )
 
 // Method to process given phrase to find legitimate words
-func ProcessPhrase(phrase string) string {
+func ProcessPhrase(phrase string) (string, error) {
 
 	// maintain information about which indices denote words
 	// prevWord denotes information about which index before i was a word
@@ -17,25 +17,28 @@ func ProcessPhrase(phrase string) string {
 		isWord = append(isWord, false)
 		prevWord = append(prevWord, -1)
 
-		if i == 0 {
-			isWord[i] = true
-			continue
-		}
-
 		// for single letters, only letter i is a valid pronoun, rest are not considered
-		if (isWord[i-1] == true && (string(phrase[i]) == "i" || string(phrase[i]) == "I")) {
+		if ((i == 0 || isWord[i-1] == true) && (string(phrase[i]) == "i" || string(phrase[i]) == "I")) {
 			isWord[i] = true
 			prevWord[i] = i-1
 			continue
 		}
 
+		// if first letter was not an  "i", go to next letter
+		if i == 0 {
+			continue
+		}
+
 		// find the complete word nearest to the left of index i, ignoring single letters
-		for j := i-2; j > -2; j-- {
+		for j := -1; j <= i-2; j++ {
 			if j == -1 || isWord[j] == true {
 
 				// if a word is found till index j, check if phrase[j+1:i+1] is a word
-				exists := oxforddict.ConnectAndCheck(phrase[j+1:i+1])
-				// fmt.Println(phrase[j+1:i+1], exists)
+				exists, error := oxforddict.ConnectAndCheck(phrase[j+1:i+1])
+
+				if error != nil {
+					return "", error
+				}
 				if exists == true {
 					isWord[i] = true
 					if i > 0 {
@@ -52,7 +55,7 @@ func ProcessPhrase(phrase string) string {
 	// Capitalize the letters
 	resPhrase := makeCamelCase(phrase, capitals)
 
-	return resPhrase
+	return resPhrase, nil
 }
 
 //.Method to find indices which have completed words starting the zeroeth index

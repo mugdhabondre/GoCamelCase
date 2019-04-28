@@ -17,8 +17,12 @@ func RequestHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	phrase := vars["phrase"]
 	io.WriteString(w, fmt.Sprint("Input:", phrase, "\n"))
-	result :=  gocamelcaseimpl.ProcessPhrase(phrase)
-	io.WriteString(w, fmt.Sprint("Result:", result, "\n"))
+	result, error :=  gocamelcaseimpl.ProcessPhrase(phrase)
+	if error != nil {
+		io.WriteString(w, fmt.Sprint("Oops, looks like there was an Error:\n" + error.Error() ))
+	} else {
+		io.WriteString(w, fmt.Sprint("Result:", result, "\n"))
+	}
 }
 
 // HelloHandler return hello world message`

@@ -23,32 +23,34 @@ type config struct{
 }
 
 // method to connect to oxford API and check if the given word exists 
-func ConnectAndCheck(word_id string) bool {
+func ConnectAndCheck(word_id string) (bool, error) {
 	rootPath, _ := os.Getwd()
 	credFilePath, _ := filepath.Abs(credentialsfile)
 	credFilePath = rootPath + credentialsfile
 	config, error := getcredentials(credFilePath)
 
 	if error != nil {
-		return false
+		return false, error
 	}
 
 	categories :=  "verb,adjective,adverb,conjunction,numeral,particle,preposition,pronoun,noun"
 	url :=  oxfordUrl + endpoint + "/" + language_code + "/" + strings.ToLower(word_id) + "?fields=definitions&strictMatch=true&lexicalCategory=" + categories
-
+	
 	// Create client connection
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		os.Exit(1)
+		return false, err
 	}
+
 	req.Header.Add("app_id", config.Appid)
 	req.Header.Add("app_key", config.Appkey)
 	resp, err := client.Do(req)
 
 	if err != nil {
 		fmt.Println(err)
-		return false
+		return false, err
 	}
 	defer resp.Body.Close()
 
@@ -61,7 +63,17 @@ func ConnectAndCheck(word_id string) bool {
 	// Check if the response contains error, if it does, the word does not exist
 	_, errorexists := jsonResp["error"]
 
-	return !errorexists
+	if errorexists == false {
+		if jsonResp["results"] == nil {
+			return false, nil
+		}
+		results := jsonResp["results"].([]interface{})
+		if len(results) == 0 {
+			return false, nil
+		}
+	}
+
+	return !errorexists, nil
 }
 
 // Get appi_id and app_key for Oxford Dictionary API
