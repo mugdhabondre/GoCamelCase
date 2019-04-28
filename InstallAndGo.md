@@ -6,8 +6,8 @@ If you do not have Go installed, [this](https://golang.org/doc/install) is a goo
 You can set $GOROOT as an environment variable to your $HOME/go path, as:
 
 ```bash
-export GOROOT=$HOME/go
-echo GOROOT
+$ export GOROOT=$HOME/go
+$ echo GOROOT
 ```  
 
 When you are all set to _Go_, lets download the github repo. 
@@ -38,7 +38,7 @@ This will create a new _build_ folder and executable ./build/camelcaseapp.
 
 ## Deploy
 Lets deploy the service on localhost. 
-Run the following command in. bash:
+Run the following command in bash:
 
 ```bash
 $ build/camelcaseapp
@@ -62,7 +62,7 @@ Result:gameOfThrones
 
 Now lets try to deploy our solution in a container, so that we can deploy the container on Azure.
 
-[Create](https://hub.docker.com/) a docker hub account if you dont have one. My username on docker hub is _mugdhab_ and gocalecase is the image that I want to build.<br/>
+[Create](https://hub.docker.com/) a docker hub account if you dont have one. My username on docker hub is _mugdhab_ and _gocamelcase_ is the image that I want to build.<br/>
 A Dockerfile is included in this repo which creates an image from Alpine Linux.<br/>
 Build a container image as follows and try to run it locally:
 
@@ -95,5 +95,5 @@ $ az appservice plan create --name AzureGoSP --resource-group AzureGoRG --sku S1
 $ az webapp create --resource-group AzureGoRG --plan AzureGoSP  --name camelcasegenerator --deployment-container-image-name mugdhab/gocamelcase:latest
 ``` 
 
-Now the application will. be available @ https://camelcasegenerator.azurewebsites.net/. Yay!
+Now the application will be available @ https://camelcasegenerator.azurewebsites.net/. Yay!
 

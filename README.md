@@ -12,11 +12,11 @@ The service is deployed in Azure.
 
 ## Installation
 
-Instructions for installation and running the service can be found [here](https://github.com/mugdhabondre/goCamelCase/installAndGo.md).
+Instructions for installation and running the service can be found [here](https://github.com/mugdhabondre/goCamelCase/blob/master/InstallAndGo.md).
 
 ##  Design
 
-The design of the service and libraries used internally can be found [here](https://github.com/mugdhabondre/goCamelCase/Design.md).
+The design of the service and libraries used internally can be found [here](https://github.com/mugdhabondre/goCamelCase/blob/master/Design.md).
 It also defines the assumptions of the service, and talks about the analysis and future improvements.
  
 

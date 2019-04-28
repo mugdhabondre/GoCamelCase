@@ -30,7 +30,7 @@ func ProcessPhrase(phrase string) (string, error) {
 		}
 
 		// find the complete word nearest to the left of index i, ignoring single letters
-		for j := -1; j <= i-2; j++ {
+		for j := i-2; j > -2; j-- {
 			if j == -1 || isWord[j] == true {
 
 				// if a word is found till index j, check if phrase[j+1:i+1] is a word
