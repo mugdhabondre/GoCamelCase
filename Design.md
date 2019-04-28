@@ -111,18 +111,25 @@ These latencies are way more than the acceptable limit of a normal service. Lets
 
 ## Improvements
 
-1. Algorithmic improvements<br/>
+1. Algorithmic improvements
+
 __Bottom__ __Up__ __Approach__: The algorithm is bottom up currently. If we make it top bottom, we can save some time, by checking only for those indices which can form a potential word. Worst case would still be the same as bottom up, but we do better on the average case.<br/>
+
 __Reverse__ __Traversal__:  Another improvement could be start the second scanning of indices (j) in forward manner instead of reverse. I tried this, but it increases the latency by atleast 1s for sentences with 13-14 letters.<br/>
+
 __Multiple__ __Queries__ __from__ __a__ __single__ __connection__: The algorithm is quadratic. At each index (i) it can fire upto i queries, n-1 worst case. This is a lot of calls to the oxford dictionary API. One of the solutions could be to open an client connection and fire queries repeatedly to save time on handshakes. 
 This can result in a few extra queries, but we would save some time by this. <br/>
 
 2. Oxford Dictionaries API 
+
 __Input__ __Array__ __of__ __Words__: The API does not have an endpoint which can take in an array of words and return if they are valid or not. This type of a request can save a lot of time <br/>
+
 __API__ __Response__: The "entries" endpoint returns a lot of data even after limiting the data using fields and filters.<br/>
+
 __Another__ __API?__: Many other APIs are avialable online which provide validation of words. They should be checked if they are any faster and provide the endpoints that we need.<br/>
 
 3. Use of higher programming primitives
+
 __Parallel__ __requests__: The queries going to the oxford dictionaries api can be multithreaded to achieve the same goal in lesser amount of time. We can parallelize the queries in the inner loop of the algorithm.  
 
 4. Caching results
