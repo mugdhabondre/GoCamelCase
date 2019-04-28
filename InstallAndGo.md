@@ -24,7 +24,7 @@ This will install the repo at $GOROOT/src/github.com/mugdhabondre/goCamelCase on
 ## Setting up Oxford Dictionary API credentials
 
 The application requires Oxford Dictionaries API credentials. You can create an account on [Oxford Dictionaries website](https://developer.oxforddictionaries.com/).<br />
-Create a new file ./credentials.json in the current directory and paste these credentials - app_id and app_key in json format. A sample can be found [here](https://github.com/mugdhabondre/goCamelCase/example.json)
+Create a new file ./credentials.json in the current directory and paste these credentials - app_id and app_key in json format. A sample can be found [here](example.json)
 
 ## Lets build it
 
@@ -49,14 +49,14 @@ Listen serve for port...  3006
 By default the http server listens at port number 3006. <br/>
 You can go to http://localhost:3006 to view the homepage of the application. 
 
+<kbd>![localDeployHome](../helper/images/localDeployHome.png)</kbd>
+
 Lets try requesting for camelCase on a string. Enter the following url:<br />
 http://localhost:3006/camelcase/gameofthrones
 
 You will see an output like:
-```bash
-Input:gameofthrones
-Result:gameOfThrones
-```
+
+<kbd>![localDeployCamelCase](../helper/images/localDeployCamelCase.png)</kbd>
 
 ## Deploy in Docker
 
@@ -73,6 +73,8 @@ $ docker run -p 5005:80 --env PORT=80 mugdhab/gocamelcase:latest
 ```
 
 You can access the application at http://localhost:5005/ .
+
+<kbd>![dockerDeployCamelCase](../helper/images/dockerDeployCamelCase.png)</kbd>
 
 Lets publish the image. on docker hub:
 
@@ -96,5 +98,13 @@ $ az appservice plan create --name AzureGoSP --resource-group AzureGoRG --sku S1
 $ az webapp create --resource-group AzureGoRG --plan AzureGoSP  --name camelcasegenerator --deployment-container-image-name mugdhab/gocamelcase:latest
 ``` 
 
+The application will be visible under AppServices Blade:
+
+<kbd>![azureApp](../helper/images/azureApp.png)</kbd>
+
 Now the application will be available @ https://camelcasegenerator.azurewebsites.net/. Yay!
+
+<kbd>![azureDeployHome](../helper/images/azureDeployHome.png)</kbd>
+
+<kbd>![azureDeployCamelCase](../helper/images/azureDeployCamelCase.png)</kbd>
 
