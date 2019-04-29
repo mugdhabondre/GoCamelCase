@@ -33,7 +33,7 @@ func ConnectAndCheck(word_id string) (bool, error) {
 		return false, error
 	}
 
-	categories :=  "verb,adjective,adverb,conjunction,numeral,particle,preposition,pronoun,noun"
+	categories :=  "verb,adjective,adverb,conjunction,numeral,particle,preposition,pronoun,noun,determiner"
 	url :=  oxfordUrl + endpoint + "/" + language_code + "/" + strings.ToLower(word_id) + "?fields=definitions&strictMatch=true&lexicalCategory=" + categories
 	
 	// Create client connection

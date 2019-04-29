@@ -42,6 +42,7 @@ I deployed my application in Azure at the end. It was pretty easy to deploy it a
 1. I am expecting the input to be small, may be 7-60 letters. This is because the oxford dictionaries api allows only 60 request per minute. Also, it has a limit of 1000 requests per month. These limits can be increased by purchasing the enterprise or research version. <br/>
 2. Another assumption is, I am considering the input to contain words that are in their root form. If a word is not in the root form, for example, _rocking_ instead of _rock_, it needs to be converted using the _lemmas_ api of oxford dictionaries. This requires an additional http request, and exceeds the limits specified. <br />
 3. Oxford Dictionaries API assumes every letter of the alphabet to be a _noun_. So I am not checking for any single letters to be words, except for the letter _i_/_I_. 
+4. I am filtering the API results for the following lexical categories: verb,adjective,adverb,conjunction,numeral,particle,preposition,pronoun,noun. Any parts of speech other than this, wont be recognized as a part of the algorithm.
 
 
 ## Core Algorithm
@@ -62,28 +63,45 @@ But recursive implementation has exponential time complexity. So, I have used Dy
 Following is the algorithm that I have implemented:
 
 ```bash
-Maintain isWord array to check if is there is a complete chain of words till index i
-Maintain prevword array to store the index of the end of a word previous to the word ending at i, else -1
-start from the first index and traverse over each index (i) in the input
-  for each i, traverse the string input[:i] in reverse to find out the first index (j) such that input[j:i] is a valid word using _ConnectAndCheck_ and isWord[j-1] == true
-    isWord[i] = true
-    prevword[i] = j-1
-  if no such index is found, isWord[i] = false, prevWord[i] = -1
-At the end of this cycle, check if isWord[len(input)-1] == true
-  if yes, traverse prevWord array from the last index such that:
-    while(prevWord[i] != -1)
-      i = prevword[i]
-      result.append(i)
-  Now, result contains the indices of input to be capitalized.
-  traverse through each index and capitalize the letter in input 
-  return modified input
-  if no:
-    find the latest index (k) which had isWord[k] and repeat the above process to extract capital letter indices till k<br/>
-    append the rest of the letters in lowercase
-  return modified input
+isWord = [] #Store information about valid words till index i
+prevWord = [] #Store information about the previous valid chain of words till index i
+FOR each index i in input
+	FOR each index j in input, such that j < i, j ∈ {i-1, 0} #parse in reverse order
+		isWord[i] = FALSE, prevWord[i] = -1 #initialization
+		IF _ConnectAndCheck(input[j:i]) = TRUE && isWord[j-1] = TRUE THEN
+			isWord[i] = TRUE 
+			prevWord[i] = j-1
+		ENDIF
+	ENDFOR
+ENDFOR
+
+IF isWord[len(input)-1] != TRUE THEN
+	# if cant find a chain of words till the last index, find the latest index for which. isWord = TRUE
+	FOR each index j in input
+		IF isWord[j] = TRUE THEN
+			endIndex = j
+		ENDIF
+	ENDFOR
+ENDIF 
+
+# Now find indices to be capitalized using isWord and prevWord
+res = []
+i = endIndex
+WHILE prevWord[i] != -1
+	res.push(i)
+	i = prevword[i]
+ENDWHILE
+
+#Capitalize letters at indices in res array
+FOR index i in res
+	input = input[:i] + i.upper() + input[i:]
+ENDFOR
 ```
 
 This algorithm runs in O(n^2). We will discuss improvements over the algorithm in Improvements section. 
+
+A peculiar thing to observe about this algorithm is, it picks a chain of shortest words. 
+For example, a string _mango_, could be the noun _mango_ or a combination of two words, _man_ and _mo_. The algorithm displays the output as _manGo_. This is because the inner loop of the DP traverses the input in reverses and tries to find the shortest word from index j to i, that can be included in a chain of words till j.
 
 ## Implementation
 
@@ -112,7 +130,7 @@ These latencies are way more than the acceptable limit of a normal service. Lets
 ## Improvements
 
 1. Algorithmic improvements<br/><br/>
-__Bottom__ __Up__ __Approach__: The algorithm is bottom up currently. If we make it top bottom, we can save some time, by checking only for those indices which can form a potential word. Worst case would still be the same as bottom up, but we do better on the average case.<br/><br/>
+__Bottom__ __Up__ __Approach__: The algorithm is bottom up currently. If we make it top down, we can save some time, by checking only for those indices which can form a potential word. Worst case would still be the same as bottom up, but we do better on the average case.<br/><br/>
 __Reverse__ __Traversal__:  Another improvement could be start the second scanning of indices (j) in forward manner instead of reverse. I tried this, but it increases the latency by atleast 1s for sentences with 13-14 letters.<br/><br/>
 __Multiple__ __Queries__ __from__ __a__ __single__ __connection__: The algorithm is quadratic. At each index (i) it can fire upto i queries, n-1 worst case. This is a lot of calls to the oxford dictionary API. One of the solutions could be to open an client connection and fire queries repeatedly to save time on handshakes. 
 This can result in a few extra queries, but we would save some time by this. <br/><br/>
