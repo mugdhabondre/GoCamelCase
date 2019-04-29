@@ -101,7 +101,7 @@ ENDFOR
 This algorithm runs in O(n^2). We will discuss improvements over the algorithm in Improvements section. 
 
 A peculiar thing to observe about this algorithm is, it picks a chain of shortest words. 
-For example, a string _mango_, could be the noun _mango_ or a combination of two words, _man_ and _mo_. The algorithm displays the output as _manGo_. This is because the inner loop of the DP traverses the input in reverses and tries to find the shortest word from index j to i, that can be included in a chain of words till j.
+For example, a string _mango_, could be the noun _mango_ or a combination of two words, _man_ and _go_. The algorithm displays the output as _manGo_. This is because the inner loop of the DP traverses the input in reverse and tries to find the shortest word from index j to i, that can be included in a chain of words till j.
 
 ## Implementation
 
